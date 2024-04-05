@@ -4,8 +4,8 @@ from tensorflow.keras import layers, Model
 import pathlib
 import json
 
-strategy = tf.distribute.MirroredStrategy()
-print('DEVICES AVAILABLE: {}'.format(strategy.num_replicas_in_sync))
+#strategy = tf.distribute.MirroredStrategy()
+#print('DEVICES AVAILABLE: {}'.format(strategy.num_replicas_in_sync))
 
 
 
@@ -58,7 +58,7 @@ es = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', mode='max', patien
 
 
 name = "Xception_line"
-with strategy.scope():
+with tf.device('/device:GPU:1'):
     inp = layers.Input((img_h,img_h,3))
     x = Xception(input_tensor=inp, weights=None, include_top=False )
     x.trainable = True ## Not trainable weights
