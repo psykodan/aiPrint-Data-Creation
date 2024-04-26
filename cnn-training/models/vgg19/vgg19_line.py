@@ -9,7 +9,7 @@ import json
 
 
 
-data_dir = pathlib.Path("../../data/synth_data/augmented_synth_line/train")
+data_dir = pathlib.Path("data/real_data/augmented_real_line/train")
 
 batch_size = 64
 img_h = 224
@@ -57,7 +57,7 @@ print(class_weights)
 es = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', mode='max', patience=20,  restore_best_weights=True)
 
 
-name = "vgg19_line"
+name = "results/vgg19_line"
 with tf.device('/device:GPU:1'):
     inp = layers.Input((img_h,img_h,3))
     x = VGG19(input_tensor=inp, weights=None, include_top=False )
@@ -80,7 +80,7 @@ with tf.device('/device:GPU:1'):
                 tf.keras.metrics.FalseNegatives()
                 ])
     
-    history = model.fit(train_ds, epochs=epochs, validation_data=val_ds, batch_size=64, callbacks=[es],verbose = 2)
+    history = model.fit(train_ds, epochs=epochs, validation_data=val_ds, batch_size=64, callbacks=[es],verbose = 1)
     # Get the dictionary containing each metric and the loss for each epoch
     history_dict = history.history
     # Save it under the form of a json file

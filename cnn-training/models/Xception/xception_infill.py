@@ -9,7 +9,7 @@ import json
 
 
 
-data_dir = pathlib.Path("../../data/synth_data/augmented_synth_infill/train")
+data_dir = pathlib.Path("data/real_data/augmented_real_infill/train")
 
 batch_size = 64
 img_h = 224
@@ -57,7 +57,7 @@ print(class_weights)
 es = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', mode='max', patience=20,  restore_best_weights=True)
 
 
-name = "Xception_line"
+name = "results/Xception_infill"
 with tf.device('/device:GPU:1'):
     inp = layers.Input((img_h,img_h,3))
     x = Xception(input_tensor=inp, weights=None, include_top=False )
