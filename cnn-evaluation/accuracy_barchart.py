@@ -4,7 +4,9 @@ import numpy as np
 models = ["vgg19","MobileNetV3","ResNet50","Xception"]
 #models = ["vgg19_line","vgg19_infill","MobileNetV3_line","MobileNetV3_infill","ResNet50_line","ResNet50_infill","Xception_line","Xception_infill"]
 #res = [[924, 875], [938, 874], [919, 877], [934, 873]]
-res = [[92.4, 93.8, 91.9, 93.4],[87.5, 87.4, 87.7, 87.3]]
+#synth_res = [[92.4, 93.8, 91.9, 93.4],[87.5, 87.4, 87.7, 87.3]]
+#real_res = [[98.4,98.7,98.5,98.6,],[95.8, 95.7,96.8,96.3]]
+res = [[98.3,98.3,97.9,97.9],[56.1,96.1,95.9,95.8]]
 # Figure Size
 fig, ax = plt.subplots(figsize =(5, 3))
 barWidth = 0.25
@@ -27,4 +29,4 @@ plt.yticks([10,20,30,40,50,60,70,80,90,100,130])
 plt.legend()
 plt.tight_layout()
 # Show Plot
-plt.savefig("accuracies.png",dpi=300)
+plt.savefig("transfer-accuracies.png",dpi=300)

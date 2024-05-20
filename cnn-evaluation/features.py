@@ -5,16 +5,16 @@ from tensorflow.keras.preprocessing.image import load_img
 from skimage.transform import resize
 
 #Line model
-models ={"vgg19_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/vgg19_line.h5'),
+models ={"vgg19_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/vgg19_line.h5'),
 		 
-         "MobileNetV3_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/MobileNetV3Small_line.h5'),
+         "MobileNetV3_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/MobileNetV3Small_line.h5'),
 		 
-         "ResNet50_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/ResNet50V2_line.h5'),
+         "ResNet50_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/ResNet50V2_line.h5'),
 		
-         "Xception_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/Xception_line.h5')}
+         "Xception_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/Xception_line.h5')}
 		 
 
-img1 = load_img('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/data/synth_data/augmented_synth_line/test/good/12.jpg', target_size=(224, 224))
+img1 = load_img('/Users/daniel/Documents/CNN Training/real_data/augmented_real_line/test/good/400.jpg', target_size=(224, 224))
 
 fig, ax = plt.subplots(8, 4, sharex=True, sharey=True, figsize=(4,8))
 col = 0

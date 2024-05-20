@@ -1,3 +1,8 @@
 .DS_Store
 cnn-training/data
 data
+cnn-training/results-real
+cnn-training/results-synth
+cnn-training/results-transfer
+deployment/optimised_models
+*.mp4

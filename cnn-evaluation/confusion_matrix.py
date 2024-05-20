@@ -6,15 +6,15 @@ import random
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import keras
-models ={"vgg19_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/vgg19_line.h5'),
+models ={"vgg19_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/vgg19_line.h5'),
 		 
-         "MobileNetV3_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/MobileNetV3Small_line.h5'),
+         "MobileNetV3_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/MobileNetV3Small_line.h5'),
 		 
-         "ResNet50_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/ResNet50V2_line.h5'),
+         "ResNet50_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/ResNet50V2_line.h5'),
 		
-         "Xception_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/Xception_line.h5')}
+         "Xception_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/Xception_line.h5')}
 class_names=["good","over","under"]
-dataset_path_test = '/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/data/synth_data/augmented_synth_line/test/'
+dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_line/test/'
 test_ds = tf.keras.utils.image_dataset_from_directory(
     dataset_path_test,
     label_mode="categorical",
@@ -59,7 +59,7 @@ for m in models:
         plt.xlabel('Predicted Label')
         plt.ylabel('True Label')
         plt.tight_layout()
-        plt.savefig(f"{m}_CM.png",dpi=300)
+        plt.savefig(f"real-{m}_CM.png",dpi=300)
         plt.show()
             
 

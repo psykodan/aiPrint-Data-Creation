@@ -7,19 +7,19 @@ import matplotlib.pyplot as plt
 import random
 
 
-models ={"vgg19_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/vgg19_line.h5'),
-		 "vgg19_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/vgg19_infill.h5'),
-         "MobileNetV3_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/MobileNetV3Small_line.h5'),
-		 "MobileNetV3_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/MobileNetV3Small_infill.h5'),
-         "ResNet50_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/ResNet50V2_line.h5'),
-		 "ResNet50_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/ResNet50V2_infill.h5'),
-         "Xception_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/Xception_line.h5'),
-		 "Xception_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/Xception_infill.h5')}
+models ={"vgg19_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/vgg19_line.h5'),
+		 "vgg19_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/vgg19_infill.h5'),
+         "MobileNetV3_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/MobileNetV3Small_line.h5'),
+		 "MobileNetV3_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/MobileNetV3Small_infill.h5'),
+         "ResNet50_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/ResNet50V2_line.h5'),
+		 "ResNet50_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/ResNet50V2_infill.h5'),
+         "Xception_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/Xception_line.h5'),
+		 "Xception_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-transfer/Xception_infill.h5')}
 batch_size = 64
 img_h = 224
 img_w = 224
-dataset_path_test1 = '/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/data/synth_data/augmented_synth_line/test'
-dataset_path_test2 = '/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/data/synth_data/augmented_synth_infill/test'
+dataset_path_test1 = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_line/test'
+dataset_path_test2 = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_infill/test'
 #dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_line'
 line_ds = tf.keras.utils.image_dataset_from_directory(
     dataset_path_test1,
@@ -52,13 +52,13 @@ for m in models:
         test_labels = []
         #for test in range(100):
         for x,y in test_ds.as_numpy_iterator(): 
-            if len(test_images) <= 10000:
+            if len(test_images) <= 1000:
                 for i in range(batch_size):
                     image = x[i].astype("uint8")
                     test_images.append(image)
                     test_labels.append(y[i])
 
-        for num, t_img in enumerate(test_images[10000*repeat:10000*(repeat+1)]):  
+        for num, t_img in enumerate(test_images[1000*repeat:1000*(repeat+1)]):  
 
             predictions = models[m].predict(np.expand_dims(t_img, axis=0), verbose = 0)
             score = tf.nn.softmax(predictions[0])
@@ -69,7 +69,7 @@ for m in models:
                 num_correct += 1
 
         
-        print(f"{m} got {num_correct} out of 10000 correct")
+        print(f"{m} got {num_correct} out of 1000 correct")
         results.append(num_correct)
 
 print(results)

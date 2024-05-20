@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt
 import random
 
 
-model = tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results/vgg19_line.h5')
+model = tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/vgg19_infill.h5')
 batch_size = 64
 img_h = 224
 img_w = 224
-dataset_path_test = '/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/data/synth_data/augmented_synth_line/test'
+dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_infill/test/'
 #dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_line'
 test_ds = tf.keras.utils.image_dataset_from_directory(
     dataset_path_test,
     label_mode="categorical",
-    seed=234,
+    seed=1,
     image_size=(img_h, img_w),
     batch_size=batch_size,
 )
@@ -60,4 +60,4 @@ for repeat in range(1):
     
     print(f"{num_correct} out of 16 correct")
 plt.tight_layout()
-plt.savefig("line.png",dpi=300)
+plt.savefig("infill.png",dpi=300)
