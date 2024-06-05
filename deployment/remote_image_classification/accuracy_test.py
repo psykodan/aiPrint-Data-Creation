@@ -85,6 +85,11 @@ boxx=650
 
 print_start = False
 resp=["","","","","","","","","","",1,1,1]
+
+detection_list = ["none","good","over","under","none","good","over","under","none"]
+detection_list_counter=0
+results = open("accuracies_Xception_5.txt","a")
+results.write(f"True:Predicted")
 # Read until video is completed 
 start = time.time()
 while(True): 
@@ -100,6 +105,7 @@ while(True):
     if print_start == True:
         if frame_num%5==0:
             data = frame[boxy-box:boxy+box,boxx-box:boxx+box]
+            #cv2.imshow('sdfsd',data)
             data = cv2.resize(data,(140,140))
             
             data = data.reshape(-1)
@@ -108,6 +114,7 @@ while(True):
 
             resp, server = sock.recvfrom(512)
             resp = json.loads(resp.decode())
+            results.write(f"{detection_list[detection_list_counter]}:{resp[0]}\n")
             if resp[0] == "over" and high == False:
                 #adjust_extrusion(50)
                 high = True
@@ -173,6 +180,7 @@ while(True):
         cv2.putText(frame, f"- Over: {resp[7]}", (length-275,top_right+180), font, .5, colour, 1, cv2.LINE_AA)
         cv2.putText(frame, f"- Under: {resp[8]}", (length-275,top_right+210), font, .5, colour, 1, cv2.LINE_AA)
         cv2.putText(frame, f"- Good: {resp[9]}", (length-275,top_right+240), font, .5, colour, 1, cv2.LINE_AA)
+        cv2.putText(frame, f"{detection_list_counter}", (length-275,top_right+270), font, .5, colour, 1, cv2.LINE_AA)
         
         #Confidence bars
         cv2.putText(frame, "Classification Confidence", (50,top_left), font, .5, colour, 1, cv2.LINE_AA)
@@ -213,10 +221,12 @@ while(True):
     frame_num += 1
     fps = frame_num / (time.time()-start)
 # Press Q on keyboard to exit 
-    if cv2.waitKey(10) & 0xFF == ord('q'): 
-        break
-    if cv2.waitKey(10) & 0xFF == ord('s'): 
+    if cv2.waitKey(25) & 0xFF == ord('q'): 
+        detection_list_counter+=1
+    if detection_list_counter == 1:
         print_start = True
+    if detection_list_counter >7:
+        break
 
 # Break the loop 
     #else: 
@@ -226,6 +236,7 @@ while(True):
 # the video capture object 
 #cap.release() 
 #out.release()
-# Closes all the frames 
+# Closes all the frames
+results.close()
 cv2.destroyAllWindows() 
 

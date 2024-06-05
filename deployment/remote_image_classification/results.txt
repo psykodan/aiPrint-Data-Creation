@@ -1,0 +1,4 @@
+model:MobileNet, start:1715739040.7901711, end:1715739140.7901723, num_detections:1299
+model:vgg19, start:1715739241.3160448, end:1715739341.3160453, num_detections:408
+model:ResNet50, start:1715739437.5685713, end:1715739537.5685728, num_detections:651
+model:Xception, start:1715739600.5115488, end:1715739700.5115504, num_detections:615

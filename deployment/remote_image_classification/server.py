@@ -14,7 +14,8 @@ UDP_PORT = 12345 # port
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
-models ={"MobileNet_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/MobileNetV3Small_line.h5')}
+models ={"MobileNet_line" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/Xception_line.h5')
+,"MobileNet_infill" : tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/Xception_infill.h5')}
 
 class_names=["good","over","under"]
 class_confidence=["","","",""]
@@ -38,9 +39,12 @@ while True:
         scores.append(predictions[0])
         details += f"{model} good {predictions[0][0]:.5f} over {predictions[0][1]:.5f} under {predictions[0][2]:.5f}\n"
 
+    winner = 0
+    if max(scores[1])>max(scores[0]):
+        winner = 1
     #Worst case classification
-    if scores[0][0] < 0.99:
-        c = np.argmax([scores[0][1],scores[0][2]])+1
+    if scores[winner][0] < 0.9:
+        c = np.argmax([scores[winner][1],scores[winner][2]])+1
         label = class_names[c]
         detection_count[c] +=1
     else:
@@ -49,17 +53,17 @@ while True:
 
     
     #Confidence bars
-    for idx, s in enumerate(predictions[0]):
+    for idx, s in enumerate(scores[winner]):
         bar = ""
         for i in range(int(float(s)*30)):
             bar+="|"
         class_confidence[idx]=bar
-    #cv2.imwrite("result.jpg", image)
+    cv2.imwrite("result.jpg", image)
     
-    packet = [label, f"{predictions[0][0]:.3f}",f"{predictions[0][1]:.3f}", f"{predictions[0][2]:.3f}",class_confidence[0],class_confidence[1],class_confidence[2],
+    packet = [label, f"{scores[winner][0]:.3f}",f"{scores[winner][1]:.3f}", f"{scores[winner][2]:.3f}",class_confidence[0],class_confidence[1],class_confidence[2],
               f"{(100 / sum(detection_count)) * (detection_count[1]):.2f}%",
               f"{(100 / sum(detection_count)) * (detection_count[2]):.2f}%",
-              f"{(100 / sum(detection_count)) * (detection_count[1]+detection_count[2]):.2f}%",
+              f"{(100 / sum(detection_count)) * (detection_count[0]):.2f}%",
               detection_count[0],
               detection_count[1],
               detection_count[2]]

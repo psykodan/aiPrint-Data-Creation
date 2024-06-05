@@ -10,6 +10,7 @@ import json
 from picamera2 import Picamera2
 import serial
 
+
 PATH = "/home/pi"
 extrusion_correction = 100
 low = False
@@ -83,11 +84,13 @@ box = 260
 boxy = 380
 boxx=650
 
-print_start = False
+print_start = True
 resp=["","","","","","","","","","",1,1,1]
 # Read until video is completed 
 start = time.time()
-while(True): 
+end = time.time() + 100
+num_detections = 0
+while(time.time()<end): 
       
 # Capture frame-by-frame 
     frame = picam.capture_array()
@@ -98,7 +101,7 @@ while(True):
 # Display the resulting frame 
     #cv2.imshow('Frame', frame)
     if print_start == True:
-        if frame_num%5==0:
+        if frame_num%1==0:
             data = frame[boxy-box:boxy+box,boxx-box:boxx+box]
             data = cv2.resize(data,(140,140))
             
@@ -108,6 +111,7 @@ while(True):
 
             resp, server = sock.recvfrom(512)
             resp = json.loads(resp.decode())
+            num_detections += 1
             if resp[0] == "over" and high == False:
                 #adjust_extrusion(50)
                 high = True
@@ -121,7 +125,7 @@ while(True):
         
 
         
-        
+        '''
         #Centre view finder
         #top left
         frame = cv2.line(frame,(c_length-250,c_width-250), (c_length-250,c_width-200), colours["HUD"],1)
@@ -207,6 +211,7 @@ while(True):
         frame = cv2.line(frame,(125,top_left+415), (125,top_left+465), colours["HUD"],1)
         frame = cv2.line(frame,(125,top_left+465), (c_length-250-25,top_left+465), colours["HUD"],1)
         frame = cv2.circle(frame,(c_length-250,c_width+250),25, colours["HUD"],1)
+        
     #cv2.imshow('fdfdg',frame)
     cv2.imshow('frame',frame)
     #out.write(frame)
@@ -217,7 +222,7 @@ while(True):
         break
     if cv2.waitKey(10) & 0xFF == ord('s'): 
         print_start = True
-
+        '''
 # Break the loop 
     #else: 
     #    break
@@ -227,5 +232,8 @@ while(True):
 #cap.release() 
 #out.release()
 # Closes all the frames 
-cv2.destroyAllWindows() 
+cv2.destroyAllWindows()
+f = open('VGG19.txt', 'a')
+f.write(f'start:{start}, end:{end}, num_detections:{num_detections}\n')
+f.close()
 
