@@ -12,7 +12,6 @@ import serial
 
 PATH = "/home/pi"
 extrusion_correction = 100
-cooldown=0
 low = False
 high = False 
 def adjust_extrusion(correction):
@@ -72,20 +71,25 @@ top_left = 150
 #if (cap.isOpened()== False): 
 #    print("Error opening video file") 
 
-fourcc = cv2.VideoWriter_fourcc(*'h264')
-out = cv2.VideoWriter('control_test_1_over.mp4', fourcc, 20.0, (1280,720))
+#fourcc = cv2.VideoWriter_fourcc(*'h264')
+#out = cv2.VideoWriter('output2.mp4', fourcc, 20.0, (1280,720))
 
 label=""
 colour = (0,0,0)
 frame_num = 0
 fps = 0
 
-box = 260
-boxy = 380
-boxx=650
+box = 250
+boxy = 370
+boxx=670
 
 print_start = False
 resp=["","","","","","","","","","",1,1,1]
+
+detection_list = ["none","good","over","under","none","good","over","under","none"]
+detection_list_counter=0
+results = open("accuracy/transfer/line/Xception/5.txt","a")
+results.write(f"True:Predicted\n")
 # Read until video is completed 
 start = time.time()
 while(True): 
@@ -99,8 +103,9 @@ while(True):
 # Display the resulting frame 
     #cv2.imshow('Frame', frame)
     if print_start == True:
-        if frame_num%3==0:
+        if frame_num%5==0:
             data = frame[boxy-box:boxy+box,boxx-box:boxx+box]
+            #cv2.imshow('sdfsd',data)
             data = cv2.resize(data,(140,140))
             
             data = data.reshape(-1)
@@ -109,16 +114,15 @@ while(True):
 
             resp, server = sock.recvfrom(512)
             resp = json.loads(resp.decode())
-            if cooldown == 0:
-                if resp[0] == "over":
-                    adjust_extrusion(extrusion_correction+10)
-                    cooldown = 5
-                elif resp[0] == "under":
-                    adjust_extrusion(extrusion_correction-10)
-                    cooldown = 5
-            else:
-                cooldown -= 1
-
+            results.write(f"{detection_list[detection_list_counter]}:{resp[0]}\n")
+            if resp[0] == "over" and high == False:
+                #adjust_extrusion(50)
+                high = True
+                low = False
+            elif resp[0] == "under" and low == False:
+                #adjust_extrusion(150)
+                high = False
+                low = True
             #print(resp)
             
         
@@ -176,6 +180,7 @@ while(True):
         cv2.putText(frame, f"- Over: {resp[7]}", (length-275,top_right+180), font, .5, colour, 1, cv2.LINE_AA)
         cv2.putText(frame, f"- Under: {resp[8]}", (length-275,top_right+210), font, .5, colour, 1, cv2.LINE_AA)
         cv2.putText(frame, f"- Good: {resp[9]}", (length-275,top_right+240), font, .5, colour, 1, cv2.LINE_AA)
+        cv2.putText(frame, f"{detection_list_counter}", (length-275,top_right+270), font, .5, colour, 1, cv2.LINE_AA)
         
         #Confidence bars
         cv2.putText(frame, "Classification Confidence", (50,top_left), font, .5, colour, 1, cv2.LINE_AA)
@@ -212,14 +217,16 @@ while(True):
         frame = cv2.circle(frame,(c_length-250,c_width+250),25, colours["HUD"],1)
     #cv2.imshow('fdfdg',frame)
     cv2.imshow('frame',frame)
-    out.write(frame)
+    #out.write(frame)
     frame_num += 1
     fps = frame_num / (time.time()-start)
 # Press Q on keyboard to exit 
-    if cv2.waitKey(10) & 0xFF == ord('q'): 
-        break
-    if cv2.waitKey(10) & 0xFF == ord('s'): 
+    if cv2.waitKey(25) & 0xFF == ord('q'): 
+        detection_list_counter+=1
+    if detection_list_counter == 1:
         print_start = True
+    if detection_list_counter >7:
+        break
 
 # Break the loop 
     #else: 
@@ -228,7 +235,8 @@ while(True):
 # When everything done, release 
 # the video capture object 
 #cap.release() 
-out.release()
-# Closes all the frames 
+#out.release()
+# Closes all the frames
+results.close()
 cv2.destroyAllWindows() 
 

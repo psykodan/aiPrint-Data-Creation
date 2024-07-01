@@ -12,7 +12,6 @@ import serial
 
 PATH = "/home/pi"
 extrusion_correction = 100
-cooldown=0
 low = False
 high = False 
 def adjust_extrusion(correction):
@@ -72,16 +71,16 @@ top_left = 150
 #if (cap.isOpened()== False): 
 #    print("Error opening video file") 
 
-fourcc = cv2.VideoWriter_fourcc(*'h264')
-out = cv2.VideoWriter('control_test_1_over.mp4', fourcc, 20.0, (1280,720))
+#fourcc = cv2.VideoWriter_fourcc(*'h264')
+#out = cv2.VideoWriter('output2.mp4', fourcc, 20.0, (1280,720))
 
 label=""
 colour = (0,0,0)
 frame_num = 0
 fps = 0
 
-box = 260
-boxy = 380
+box = 250
+boxy = 370
 boxx=650
 
 print_start = False
@@ -99,7 +98,7 @@ while(True):
 # Display the resulting frame 
     #cv2.imshow('Frame', frame)
     if print_start == True:
-        if frame_num%3==0:
+        if frame_num%5==0:
             data = frame[boxy-box:boxy+box,boxx-box:boxx+box]
             data = cv2.resize(data,(140,140))
             
@@ -109,16 +108,14 @@ while(True):
 
             resp, server = sock.recvfrom(512)
             resp = json.loads(resp.decode())
-            if cooldown == 0:
-                if resp[0] == "over":
-                    adjust_extrusion(extrusion_correction+10)
-                    cooldown = 5
-                elif resp[0] == "under":
-                    adjust_extrusion(extrusion_correction-10)
-                    cooldown = 5
-            else:
-                cooldown -= 1
-
+            if resp[0] == "over" and high == False:
+                #adjust_extrusion(50)
+                high = True
+                low = False
+            elif resp[0] == "under" and low == False:
+                #adjust_extrusion(150)
+                high = False
+                low = True
             #print(resp)
             
         
@@ -212,7 +209,7 @@ while(True):
         frame = cv2.circle(frame,(c_length-250,c_width+250),25, colours["HUD"],1)
     #cv2.imshow('fdfdg',frame)
     cv2.imshow('frame',frame)
-    out.write(frame)
+    #out.write(frame)
     frame_num += 1
     fps = frame_num / (time.time()-start)
 # Press Q on keyboard to exit 
@@ -228,7 +225,7 @@ while(True):
 # When everything done, release 
 # the video capture object 
 #cap.release() 
-out.release()
+#out.release()
 # Closes all the frames 
 cv2.destroyAllWindows() 
 

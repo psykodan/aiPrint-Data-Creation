@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt
 import random
 
 
-model = tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/vgg19_infill.h5')
+model = tf.keras.models.load_model('/Users/daniel/Documents/aiPrint-Publishable/aiPrint-Data-Creation/cnn-training/results-real/vgg19_line.h5')
 batch_size = 64
 img_h = 224
 img_w = 224
 dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_infill/test/'
-#dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_line'
+dataset_path_test = '/Users/daniel/Documents/CNN Training/real_data/augmented_real_line/test/'
 test_ds = tf.keras.utils.image_dataset_from_directory(
     dataset_path_test,
     label_mode="categorical",
-    seed=1,
+    seed=1678,
     image_size=(img_h, img_w),
     batch_size=batch_size,
 )
@@ -22,22 +22,22 @@ test_ds = tf.keras.utils.image_dataset_from_directory(
 class_names=["good","over","under"]
 
 num_correct = 0
-fig = plt.figure(figsize=(16,16))
+fig = plt.figure(figsize=(8,16))
 
 for repeat in range(1):
     test_images = []
     test_labels = []
     #for test in range(100):
     for x,y in test_ds.as_numpy_iterator(): 
-        if len(test_images) <= 16:
+        if len(test_images) <= 8:
             for i in range(batch_size):
                 image = x[i].astype("uint8")
                 test_images.append(image)
                 test_labels.append(y[i])
 
-    for num, t_img in enumerate(test_images[16*repeat:16*(repeat+1)]):  
+    for num, t_img in enumerate(test_images[8*repeat:8*(repeat+1)]):  
         
-        y = fig.add_subplot(4, 4, num + 1)
+        y = fig.add_subplot(4, 2, num + 1)
 
 
         predictions = model.predict(np.expand_dims(t_img, axis=0), verbose = 0)
@@ -60,4 +60,4 @@ for repeat in range(1):
     
     print(f"{num_correct} out of 16 correct")
 plt.tight_layout()
-plt.savefig("infill.png",dpi=300)
+plt.savefig("line.png",dpi=300)

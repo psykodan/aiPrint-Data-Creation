@@ -9,6 +9,7 @@ import time
 import json
 from picamera2 import Picamera2
 import serial
+import threading
 
 PATH = "/home/pi"
 extrusion_correction = 100
@@ -18,7 +19,7 @@ high = False
 def adjust_extrusion(correction):
     global extrusion_correction
     extrusion_correction = correction
-    ser = serial.Serial(f"{PATH}/printer_data/comms/klippy.serial",9600)
+    ser = serial.Serial(f"{PATH}/printer_data/comms/klippy.serial",115200)
     tx = f"M221 S{extrusion_correction} \n"
     ser.write(bytearray(tx.encode('utf-8')))
     ser.flush()
@@ -80,11 +81,12 @@ colour = (0,0,0)
 frame_num = 0
 fps = 0
 
-box = 260
-boxy = 380
-boxx=650
 
-print_start = False
+box = 250
+boxy = 360
+boxx=670
+
+control = False
 resp=["","","","","","","","","","",1,1,1]
 # Read until video is completed 
 start = time.time()
@@ -98,7 +100,7 @@ while(True):
     #cv2.imshow('frame',frame)
 # Display the resulting frame 
     #cv2.imshow('Frame', frame)
-    if print_start == True:
+    if control == True:
         if frame_num%3==0:
             data = frame[boxy-box:boxy+box,boxx-box:boxx+box]
             data = cv2.resize(data,(140,140))
@@ -109,12 +111,22 @@ while(True):
 
             resp, server = sock.recvfrom(512)
             resp = json.loads(resp.decode())
+            
             if cooldown == 0:
                 if resp[0] == "over":
-                    adjust_extrusion(extrusion_correction+10)
+                    if extrusion_correction > 100:
+                        extrusion_correction = 100
+                    
+                    t = threading.Thread(target = adjust_extrusion, args=(extrusion_correction-10,))
+                    t.start()
+                    #adjust_extrusion(extrusion_correction-10)
                     cooldown = 5
                 elif resp[0] == "under":
-                    adjust_extrusion(extrusion_correction-10)
+                    if extrusion_correction < 100:
+                        extrusion_correction = 100
+                    t = threading.Thread(target = adjust_extrusion, args=(extrusion_correction+10,))
+                    t.start()
+                    #adjust_extrusion(extrusion_correction+10)
                     cooldown = 5
             else:
                 cooldown -= 1
@@ -219,7 +231,7 @@ while(True):
     if cv2.waitKey(10) & 0xFF == ord('q'): 
         break
     if cv2.waitKey(10) & 0xFF == ord('s'): 
-        print_start = True
+        control = True
 
 # Break the loop 
     #else: 

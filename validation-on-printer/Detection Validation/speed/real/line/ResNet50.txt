@@ -1,0 +1,5 @@
+start:1715824408.28201, end:1715824508.2820115, num_detections:1001, avg_model_speed:0.068
+start:1715824508.354744, end:1715824608.3547456, num_detections:1004, avg_model_speed:0.068
+start:1715824608.431814, end:1715824708.4318151, num_detections:1001, avg_model_speed:0.068
+start:1715824708.5037327, end:1715824808.503734, num_detections:1003, avg_model_speed:0.068
+start:1715824808.5279398, end:1715824908.5279408, num_detections:1002, avg_model_speed:0.068
